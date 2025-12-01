@@ -39,6 +39,9 @@ class EnvironmentVariables {
 
   @IsString()
   DB_PASS: string;
+
+  @IsString()
+  DATABASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {
