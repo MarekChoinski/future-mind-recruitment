@@ -65,10 +65,9 @@ export function validate(config: Record<string, unknown>) {
       .join('\n');
 
     throw new Error(
-      `\n❌ Environment variables validation failed:\n${missingVars}\n\nPlease check your .env file and ensure all required variables are set.`,
+      `\nEnvironment variables validation failed:\n${missingVars}\n\nPlease check your .env file and ensure all required variables are set.`,
     );
   }
 
   return validatedConfig;
 }
-

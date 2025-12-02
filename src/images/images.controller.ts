@@ -118,4 +118,3 @@ export class ImagesController {
     return toImageResponseDto(image);
   }
 }
-

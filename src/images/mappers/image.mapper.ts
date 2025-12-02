@@ -20,4 +20,3 @@ export function toImageResponseDto(image: Image): ImageResponseDto {
     height: image.height,
   };
 }
-

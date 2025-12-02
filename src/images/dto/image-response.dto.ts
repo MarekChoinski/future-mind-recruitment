@@ -16,4 +16,3 @@ export class ImageResponseDto {
   @ApiProperty({ example: 1080 })
   height: number;
 }
-

@@ -9,4 +9,3 @@ import { ImageProcessingService } from './services/image-processing.service';
   providers: [ImagesService, ImageProcessingService],
 })
 export class ImagesModule {}
-

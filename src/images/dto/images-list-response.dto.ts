@@ -22,4 +22,3 @@ export class ImagesListResponseDto {
   @ApiProperty({ type: MetaDto })
   meta: MetaDto;
 }
-

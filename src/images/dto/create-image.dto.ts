@@ -16,4 +16,3 @@ export class CreateImageDto {
   @Min(1)
   height: number;
 }
-

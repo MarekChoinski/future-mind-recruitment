@@ -1,11 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ImagesModule } from './images/images.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { HealthModule } from './health/health.module';
 import { validate } from './config/env.validation';
-import databaseConfig from './config/database.config';
 
 @Module({
   imports: [
@@ -13,12 +11,10 @@ import databaseConfig from './config/database.config';
       isGlobal: true,
       envFilePath: '.env',
       validate,
-      load: [databaseConfig],
     }),
     PrismaModule,
+    HealthModule,
     ImagesModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

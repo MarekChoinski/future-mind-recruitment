@@ -9,4 +9,3 @@ export class FileValidationPipe implements PipeTransform {
     return file;
   }
 }
-

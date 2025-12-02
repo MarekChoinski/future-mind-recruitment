@@ -1,9 +1,14 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Test, TestingModule } from '@nestjs/testing';
 import { ImagesService } from './images.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImageProcessingService } from './services/image-processing.service';
 import { ConfigService } from '@nestjs/config';
-import { NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import {
+  NotFoundException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 
 jest.mock('fs/promises', () => ({
   unlink: jest.fn().mockResolvedValue(undefined),
@@ -17,7 +22,6 @@ describe('ImagesService', () => {
   let service: ImagesService;
   let prismaService: PrismaService;
   let imageProcessingService: ImageProcessingService;
-  let configService: ConfigService;
 
   const mockImage = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -62,7 +66,9 @@ describe('ImagesService', () => {
 
     service = module.get<ImagesService>(ImagesService);
     prismaService = module.get<PrismaService>(PrismaService);
-    imageProcessingService = module.get<ImageProcessingService>(ImageProcessingService);
+    imageProcessingService = module.get<ImageProcessingService>(
+      ImageProcessingService,
+    );
     configService = module.get<ConfigService>(ConfigService);
   });
 
@@ -78,14 +84,22 @@ describe('ImagesService', () => {
       const tmpPath = 'uploads/tmp/test.jpg';
       const tmpFilename = 'test.jpg';
 
-      jest.spyOn(imageProcessingService, 'processAndOptimize').mockResolvedValue({
-        width: 1920,
-        height: 1080,
-      });
+      jest
+        .spyOn(imageProcessingService, 'processAndOptimize')
+        .mockResolvedValue({
+          width: 1920,
+          height: 1080,
+        });
 
       jest.spyOn(prismaService.image, 'create').mockResolvedValue(mockImage);
 
-      const result = await service.createImage(title, width, height, tmpPath, tmpFilename);
+      const result = await service.createImage(
+        title,
+        width,
+        height,
+        tmpPath,
+        tmpFilename,
+      );
 
       expect(imageProcessingService.processAndOptimize).toHaveBeenCalledWith(
         tmpPath,
@@ -114,9 +128,9 @@ describe('ImagesService', () => {
       const tmpPath = 'uploads/tmp/test.jpg';
       const tmpFilename = 'test.jpg';
 
-      jest.spyOn(imageProcessingService, 'processAndOptimize').mockRejectedValue(
-        new Error('Processing failed'),
-      );
+      jest
+        .spyOn(imageProcessingService, 'processAndOptimize')
+        .mockRejectedValue(new Error('Processing failed'));
 
       await expect(
         service.createImage(title, width, height, tmpPath, tmpFilename),
@@ -132,14 +146,22 @@ describe('ImagesService', () => {
 
       const actualDimensions = { width: 1920, height: 1080 };
 
-      jest.spyOn(imageProcessingService, 'processAndOptimize').mockResolvedValue(actualDimensions);
+      jest
+        .spyOn(imageProcessingService, 'processAndOptimize')
+        .mockResolvedValue(actualDimensions);
       jest.spyOn(prismaService.image, 'create').mockResolvedValue({
         ...mockImage,
         width: actualDimensions.width,
         height: actualDimensions.height,
       });
 
-      await service.createImage(title, requestedWidth, requestedHeight, tmpPath, tmpFilename);
+      await service.createImage(
+        title,
+        requestedWidth,
+        requestedHeight,
+        tmpPath,
+        tmpFilename,
+      );
 
       expect(prismaService.image.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
@@ -152,7 +174,9 @@ describe('ImagesService', () => {
 
   describe('findOne', () => {
     it('should return image when found', async () => {
-      jest.spyOn(prismaService.image, 'findUnique').mockResolvedValue(mockImage);
+      jest
+        .spyOn(prismaService.image, 'findUnique')
+        .mockResolvedValue(mockImage);
 
       const result = await service.findOne(mockImage.id);
 
@@ -166,7 +190,9 @@ describe('ImagesService', () => {
       const nonExistentId = 'non-existent-id';
       jest.spyOn(prismaService.image, 'findUnique').mockResolvedValue(null);
 
-      await expect(service.findOne(nonExistentId)).rejects.toThrow(NotFoundException);
+      await expect(service.findOne(nonExistentId)).rejects.toThrow(
+        NotFoundException,
+      );
       await expect(service.findOne(nonExistentId)).rejects.toThrow(
         `Image with ID ${nonExistentId} not found`,
       );
@@ -232,4 +258,3 @@ describe('ImagesService', () => {
     });
   });
 });
-

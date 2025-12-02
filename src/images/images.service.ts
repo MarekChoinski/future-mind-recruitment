@@ -69,14 +69,18 @@ export class ImagesService {
         },
       });
     } catch (error) {
+      const errorStack =
+        error instanceof Error ? error.stack : 'No stack trace';
       this.logger.error(
         `Failed to process image: ${originalFilename || tmpFilename}`,
-        error.stack,
+        errorStack,
       );
       await this.cleanupFiles(tmpPath, processedPath);
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       throw new InternalServerErrorException(
         'Failed to process image',
-        error.message,
+        errorMessage,
       );
     }
   }
@@ -132,8 +136,9 @@ export class ImagesService {
         if (existsSync(path)) {
           await unlink(path);
         }
-      } catch (error) {}
+      } catch {
+        // Ignore cleanup errors - file may already be deleted
+      }
     }
   }
 }
-

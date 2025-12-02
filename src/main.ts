@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
@@ -19,13 +21,15 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Image Gallery API')
-    .setDescription('REST API for managing image gallery with upload and processing capabilities')
+    .setDescription(
+      'REST API for managing image gallery with upload and processing capabilities',
+    )
     .setVersion('1.0')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
-  
+
   app.useStaticAssets(join(__dirname, '..', 'uploads', 'processed'), {
     prefix: '/static',
     maxAge: 31536000000,
@@ -36,4 +40,5 @@ async function bootstrap() {
 
   await app.listen(process.env.PORT ?? 3000);
 }
-bootstrap();
+
+void bootstrap();

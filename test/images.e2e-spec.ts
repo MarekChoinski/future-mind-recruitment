@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -8,7 +13,6 @@ import { writeFileSync, mkdirSync, existsSync } from 'fs';
 
 describe('Images API (e2e)', () => {
   let app: INestApplication;
-  let prismaService: PrismaService;
 
   const testImagePath = join(__dirname, 'fixtures', 'test-image.jpg');
   const mockImages: any[] = [];
@@ -27,7 +31,7 @@ describe('Images API (e2e)', () => {
       }),
       findMany: jest.fn((args) => {
         let filtered = [...mockImages];
-        
+
         if (args?.where?.title?.contains) {
           const search = args.where.title.contains.toLowerCase();
           filtered = filtered.filter((img) =>
@@ -37,7 +41,7 @@ describe('Images API (e2e)', () => {
 
         const skip = args?.skip || 0;
         const take = args?.take || 10;
-        
+
         return Promise.resolve(filtered.slice(skip, skip + take));
       }),
       findUnique: jest.fn((args) => {
@@ -46,14 +50,14 @@ describe('Images API (e2e)', () => {
       }),
       count: jest.fn((args) => {
         let filtered = [...mockImages];
-        
+
         if (args?.where?.title?.contains) {
           const search = args.where.title.contains.toLowerCase();
           filtered = filtered.filter((img) =>
             img.title.toLowerCase().includes(search),
           );
         }
-        
+
         return Promise.resolve(filtered.length);
       }),
     },
@@ -81,7 +85,7 @@ describe('Images API (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
-    
+
     app.useGlobalPipes(
       new ValidationPipe({
         transform: true,
@@ -90,7 +94,6 @@ describe('Images API (e2e)', () => {
     );
 
     await app.init();
-    prismaService = moduleFixture.get<PrismaService>(PrismaService);
   });
 
   afterAll(async () => {
@@ -207,15 +210,11 @@ describe('Images API (e2e)', () => {
     });
 
     it('should reject invalid page parameter', () => {
-      return request(app.getHttpServer())
-        .get('/images?page=0')
-        .expect(400);
+      return request(app.getHttpServer()).get('/images?page=0').expect(400);
     });
 
     it('should reject limit above maximum', () => {
-      return request(app.getHttpServer())
-        .get('/images?limit=101')
-        .expect(400);
+      return request(app.getHttpServer()).get('/images?limit=101').expect(400);
     });
   });
 
@@ -253,4 +252,3 @@ describe('Images API (e2e)', () => {
     });
   });
 });
-
