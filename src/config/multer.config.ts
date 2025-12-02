@@ -14,7 +14,7 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 export const multerConfig = {
   storage: diskStorage({
-    destination: './uploads',
+    destination: './uploads/tmp',
     filename: (req, file, callback) => {
       const uniqueName = `${uuidv4()}${extname(file.originalname)}`;
       callback(null, uniqueName);

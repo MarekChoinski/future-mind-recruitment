@@ -3,7 +3,8 @@
 /node_modules
 
 # uploads
-/uploads
+/uploads/tmp
+/uploads/processed
 
 # Logs
 logs
