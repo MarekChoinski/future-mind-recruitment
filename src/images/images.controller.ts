@@ -8,6 +8,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
 import { multerConfig } from '../config/multer.config';
+import { ImageResponseDto } from './dto/image-response.dto';
+import { toImageResponseDto } from './mappers/image.mapper';
 
 @Controller('images')
 export class ImagesController {
@@ -15,27 +17,21 @@ export class ImagesController {
 
   @Post()
   @UseInterceptors(FileInterceptor('file', multerConfig))
-  uploadImage(
+  async uploadImage(
     @UploadedFile() file: Express.Multer.File,
     @Body('title') title: string,
     @Body('width') width: string,
     @Body('height') height: string,
-  ) {
-    return {
-      message: 'File uploaded successfully',
-      file: {
-        originalName: file.originalname,
-        filename: file.filename,
-        path: file.path,
-        size: file.size,
-        mimetype: file.mimetype,
-      },
-      metadata: {
-        title,
-        width: parseInt(width, 10),
-        height: parseInt(height, 10),
-      },
-    };
+  ): Promise<ImageResponseDto> {
+    const image = await this.imagesService.createImage(
+      title,
+      parseInt(width, 10),
+      parseInt(height, 10),
+      file.path,
+      file.filename,
+    );
+
+    return toImageResponseDto(image);
   }
 }
 

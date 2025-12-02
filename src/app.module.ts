@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ImagesModule } from './images/images.module';
+import { PrismaModule } from './prisma/prisma.module';
 import { validate } from './config/env.validation';
 import databaseConfig from './config/database.config';
 
@@ -14,6 +15,7 @@ import databaseConfig from './config/database.config';
       validate,
       load: [databaseConfig],
     }),
+    PrismaModule,
     ImagesModule,
   ],
   controllers: [AppController],
