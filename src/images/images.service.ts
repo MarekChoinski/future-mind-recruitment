@@ -34,11 +34,11 @@ export class ImagesService {
         targetHeight,
       );
 
-      await unlink(tmpPath);
+    await unlink(tmpPath);
 
-      const url = `/static/processed/${processedFilename}`;
+    const url = `/static/${processedFilename}`;
 
-      return this.prisma.image.create({
+    return this.prisma.image.create({
         data: {
           title,
           width: dimensions.width,
