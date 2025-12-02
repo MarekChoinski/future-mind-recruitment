@@ -52,6 +52,39 @@ export class ImagesService {
     }
   }
 
+  async findAll(page: number = 1, limit: number = 10, title?: string) {
+    const skip = (page - 1) * limit;
+
+    const where = title
+      ? {
+          title: {
+            contains: title,
+            mode: 'insensitive' as const,
+          },
+        }
+      : {};
+
+    const [images, count] = await Promise.all([
+      this.prisma.image.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: 'desc',
+        },
+      }),
+      this.prisma.image.count({ where }),
+    ]);
+
+    return {
+      images,
+      count,
+      page,
+      limit,
+      pages: Math.ceil(count / limit),
+    };
+  }
+
   private async cleanupFiles(...paths: string[]): Promise<void> {
     for (const path of paths) {
       try {
