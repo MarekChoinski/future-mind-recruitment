@@ -14,6 +14,7 @@ import { ImagesService } from './images.service';
 import { multerConfig } from '../config/multer.config';
 import { ImageResponseDto } from './dto/image-response.dto';
 import { ImagesListResponseDto } from './dto/images-list-response.dto';
+import { GetImagesQueryDto } from './dto/get-images-query.dto';
 import { toImageResponseDto } from './mappers/image.mapper';
 import { FileValidationPipe } from '../common/pipes/file-validation.pipe';
 import { MulterExceptionFilter } from '../common/filters/multer-exception.filter';
@@ -25,14 +26,13 @@ export class ImagesController {
 
   @Get()
   async findAll(
-    @Query('page') page?: string,
-    @Query('limit') limit?: string,
-    @Query('title') title?: string,
+    @Query() query: GetImagesQueryDto,
   ): Promise<ImagesListResponseDto> {
-    const pageNum = page ? parseInt(page, 10) : 1;
-    const limitNum = limit ? parseInt(limit, 10) : 10;
-
-    const result = await this.imagesService.findAll(pageNum, limitNum, title);
+    const result = await this.imagesService.findAll(
+      query.page,
+      query.limit,
+      query.title,
+    );
 
     return {
       data: result.images.map(toImageResponseDto),
