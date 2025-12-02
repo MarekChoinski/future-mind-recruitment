@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { ImageProcessingService } from './services/image-processing.service';
 import { unlink } from 'fs/promises';
@@ -83,6 +87,18 @@ export class ImagesService {
       limit,
       pages: Math.ceil(count / limit),
     };
+  }
+
+  async findOne(id: string) {
+    const image = await this.prisma.image.findUnique({
+      where: { id },
+    });
+
+    if (!image) {
+      throw new NotFoundException(`Image with ID ${id} not found`);
+    }
+
+    return image;
   }
 
   private async cleanupFiles(...paths: string[]): Promise<void> {

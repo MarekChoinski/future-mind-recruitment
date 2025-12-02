@@ -7,6 +7,7 @@ import {
   Body,
   UseFilters,
   Query,
+  Param,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ImagesService } from './images.service';
@@ -42,6 +43,12 @@ export class ImagesController {
         pages: result.pages,
       },
     };
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: string): Promise<ImageResponseDto> {
+    const image = await this.imagesService.findOne(id);
+    return toImageResponseDto(image);
   }
 
   @Post()
