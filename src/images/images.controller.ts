@@ -112,6 +112,7 @@ export class ImagesController {
       parseInt(height, 10),
       file.path,
       file.filename,
+      file.originalname,
     );
 
     return toImageResponseDto(image);

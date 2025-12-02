@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
@@ -12,6 +13,8 @@ import { existsSync } from 'fs';
 
 @Injectable()
 export class ImagesService {
+  private readonly logger = new Logger(ImagesService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly imageProcessingService: ImageProcessingService,
@@ -24,9 +27,18 @@ export class ImagesService {
     targetHeight: number,
     tmpPath: string,
     tmpFilename: string,
+    originalFilename?: string,
   ) {
+    const startTime = Date.now();
     const processedFilename = tmpFilename;
     const processedPath = join('uploads', 'processed', processedFilename);
+
+    this.logger.log(
+      `Starting image processing: ${originalFilename || tmpFilename}`,
+    );
+    this.logger.log(
+      `Generated filename: ${processedFilename}, Target dimensions: ${targetWidth}x${targetHeight}`,
+    );
 
     try {
       const dimensions = await this.imageProcessingService.processAndOptimize(
@@ -36,12 +48,18 @@ export class ImagesService {
         targetHeight,
       );
 
-    await unlink(tmpPath);
+      await unlink(tmpPath);
 
-    const appUrl = this.configService.get<string>('APP_URL');
-    const url = `${appUrl}/static/${processedFilename}`;
+      const processingTime = Date.now() - startTime;
 
-    return this.prisma.image.create({
+      this.logger.log(
+        `Image processed successfully: ${processedFilename}, Final dimensions: ${dimensions.width}x${dimensions.height}, Processing time: ${processingTime}ms`,
+      );
+
+      const appUrl = this.configService.get<string>('APP_URL');
+      const url = `${appUrl}/static/${processedFilename}`;
+
+      return this.prisma.image.create({
         data: {
           title,
           width: dimensions.width,
@@ -51,6 +69,10 @@ export class ImagesService {
         },
       });
     } catch (error) {
+      this.logger.error(
+        `Failed to process image: ${originalFilename || tmpFilename}`,
+        error.stack,
+      );
       await this.cleanupFiles(tmpPath, processedPath);
       throw new InternalServerErrorException(
         'Failed to process image',
