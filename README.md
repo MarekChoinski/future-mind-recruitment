@@ -1,98 +1,396 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Image Gallery API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API for image gallery with upload, processing, and management capabilities built with NestJS, TypeScript, Prisma, and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- ✅ Image upload with validation (jpeg, png, webp, gif, max 5MB)
+- ✅ Automatic image processing and optimization (Sharp)
+- ✅ Image resizing and cropping
+- ✅ Pagination and filtering
+- ✅ PostgreSQL database with Prisma ORM
+- ✅ OpenAPI/Swagger documentation
+- ✅ Docker support
+- ✅ Unit and E2E tests
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Prerequisites
 
-## Project setup
+- Node.js 18+
+- npm 9+
+- PostgreSQL 16 (or use Docker)
+- Docker & Docker Compose (optional)
+
+## Setup
+
+### 1. Clone and Install
 
 ```bash
-$ npm install
+cd future-mind-recruitment
+npm install
 ```
 
-## Compile and run the project
+### 2. Environment Variables
+
+Copy the example env file:
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+cp env.example .env
 ```
 
-## Run tests
+Edit `.env` and configure:
 
 ```bash
-# unit tests
-$ npm run test
+# Application
+NODE_ENV=development
+API_PORT=3000
+APP_URL=http://localhost:3000
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=image_gallery
+DB_USER=postgres
+DB_PASS=postgres
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/image_gallery
 ```
 
-## Deployment
+### 3. Database Setup
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Option A: Local PostgreSQL**
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Make sure PostgreSQL is running locally, then run migrations:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run prisma:generate
+npm run prisma:migrate
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+**Option B: Docker PostgreSQL**
 
-## Resources
+```bash
+docker-compose up -d db
+npm run prisma:generate
+npm run prisma:migrate
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 4. Start the Application
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+**Development mode:**
 
-## Support
+```bash
+npm run start:dev
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Production mode:**
 
-## Stay in touch
+```bash
+npm run build
+npm run start:prod
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+API will be available at: `http://localhost:3000`
+
+## Docker Setup
+
+### Quick Start with Docker
+
+```bash
+# 1. Copy environment file
+cp env.example .env
+
+# 2. Start all services (API + PostgreSQL)
+docker-compose up -d
+
+# 3. Check logs
+docker-compose logs -f api
+
+# 4. Stop services
+docker-compose down
+```
+
+### Run Migrations in Docker
+
+```bash
+docker-compose exec api npx prisma migrate deploy
+```
+
+## API Documentation
+
+Swagger UI is available at: **http://localhost:3000/api/docs**
+
+## API Endpoints
+
+### Health Check
+
+```bash
+curl http://localhost:3000/health
+```
+
+**Response:**
+```json
+{
+  "status": "ok"
+}
+```
+
+### Upload Image
+
+```bash
+curl -X POST http://localhost:3000/images \
+  -F "file=@/path/to/image.jpg" \
+  -F "title=Beautiful Landscape" \
+  -F "width=1920" \
+  -F "height=1080"
+```
+
+**Response:**
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "title": "Beautiful Landscape",
+  "url": "http://localhost:3000/static/abc123.jpg",
+  "width": 1920,
+  "height": 1080
+}
+```
+
+### Get All Images (with pagination)
+
+```bash
+curl "http://localhost:3000/images?page=1&limit=10"
+```
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "Beautiful Landscape",
+      "url": "http://localhost:3000/static/abc123.jpg",
+      "width": 1920,
+      "height": 1080
+    }
+  ],
+  "meta": {
+    "count": 42,
+    "page": 1,
+    "limit": 10,
+    "pages": 5
+  }
+}
+```
+
+### Filter Images by Title
+
+```bash
+curl "http://localhost:3000/images?title=landscape"
+```
+
+### Get Single Image
+
+```bash
+curl http://localhost:3000/images/123e4567-e89b-12d3-a456-426614174000
+```
+
+**Response:**
+```json
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "title": "Beautiful Landscape",
+  "url": "http://localhost:3000/static/abc123.jpg",
+  "width": 1920,
+  "height": 1080
+}
+```
+
+## Available Scripts
+
+### Development
+
+```bash
+npm run start          # Start application
+npm run start:dev      # Start with hot-reload
+npm run start:debug    # Start in debug mode
+npm run build          # Build for production
+npm run start:prod     # Run production build
+```
+
+### Database
+
+```bash
+npm run prisma:generate        # Generate Prisma Client
+npm run prisma:migrate         # Run migrations (dev)
+npm run prisma:migrate:deploy  # Run migrations (production)
+npm run prisma:studio          # Open Prisma Studio
+```
+
+### Testing
+
+```bash
+npm run test           # Unit tests
+npm run test:watch     # Unit tests in watch mode
+npm run test:cov       # Unit tests with coverage
+npm run test:e2e       # E2E tests
+```
+
+### Code Quality
+
+```bash
+npm run lint           # Run ESLint
+npm run format         # Format code with Prettier
+```
+
+### Docker
+
+```bash
+docker-compose up -d              # Start all services
+docker-compose down               # Stop all services
+docker-compose down -v            # Stop and remove volumes
+docker-compose logs -f api        # View API logs
+docker-compose logs -f db         # View database logs
+docker-compose restart api        # Restart API
+docker-compose exec api sh        # Shell into API container
+```
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── app.module.ts              # Main application module
+│   ├── main.ts                    # Application entry point
+│   ├── config/
+│   │   ├── env.validation.ts      # Environment validation
+│   │   ├── database.config.ts     # Database configuration
+│   │   └── multer.config.ts       # File upload configuration
+│   ├── prisma/
+│   │   ├── prisma.module.ts       # Prisma module
+│   │   └── prisma.service.ts      # Prisma service
+│   ├── images/
+│   │   ├── images.module.ts       # Images module
+│   │   ├── images.controller.ts   # Images controller
+│   │   ├── images.service.ts      # Images service
+│   │   ├── dto/                   # Data Transfer Objects
+│   │   ├── mappers/               # Entity to DTO mappers
+│   │   └── services/
+│   │       └── image-processing.service.ts  # Sharp image processing
+│   └── common/
+│       ├── filters/               # Exception filters
+│       └── pipes/                 # Validation pipes
+├── test/
+│   ├── images.e2e-spec.ts        # E2E tests
+│   └── fixtures/                 # Test fixtures
+├── prisma/
+│   └── schema.prisma             # Prisma schema
+├── uploads/
+│   ├── tmp/                      # Temporary uploads
+│   └── processed/                # Processed images
+├── docker-compose.yml            # Docker Compose config
+├── Dockerfile                    # Production Dockerfile
+└── package.json                  # Project dependencies
+```
+
+## Environment Variables
+
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `NODE_ENV` | Environment (development, production, test) | `development` | Yes |
+| `API_PORT` | API port | `3000` | Yes |
+| `APP_URL` | Full application URL | `http://localhost:3000` | Yes |
+| `DB_HOST` | Database host | `localhost` | Yes |
+| `DB_PORT` | Database port | `5432` | Yes |
+| `DB_NAME` | Database name | `image_gallery` | Yes |
+| `DB_USER` | Database user | `postgres` | Yes |
+| `DB_PASS` | Database password | `postgres` | Yes |
+| `DATABASE_URL` | Full database connection string | - | Yes |
+
+## Image Upload Requirements
+
+- **Formats**: JPEG, PNG, WebP, GIF
+- **Max Size**: 5MB
+- **Processing**: Automatic resize and optimization
+- **Storage**: Local filesystem (`uploads/processed/`)
+
+## Troubleshooting
+
+### Port already in use
+
+```bash
+# Change port in .env
+API_PORT=3001
+```
+
+### Database connection error
+
+```bash
+# Check PostgreSQL is running
+docker-compose ps
+
+# Restart database
+docker-compose restart db
+
+# Check logs
+docker-compose logs db
+```
+
+### Prisma Client not generated
+
+```bash
+npm run prisma:generate
+```
+
+### Permission errors with uploads folder
+
+```bash
+mkdir -p uploads/tmp uploads/processed
+chmod 755 uploads
+```
+
+### Docker build fails
+
+```bash
+# Clean rebuild
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+## Testing
+
+### Run All Tests
+
+```bash
+npm test
+```
+
+### Run Specific Test Suite
+
+```bash
+npm test -- images.service.spec.ts
+npm run test:e2e -- images.e2e-spec.ts
+```
+
+### Test Coverage
+
+```bash
+npm run test:cov
+```
+
+Coverage report will be in `coverage/` directory.
+
+## Tech Stack
+
+- **Framework**: NestJS 11.0 (LTS)
+- **Language**: TypeScript 5.7
+- **Database**: PostgreSQL 16
+- **ORM**: Prisma 5.22
+- **Image Processing**: Sharp
+- **Testing**: Jest
+- **API Docs**: Swagger/OpenAPI
+- **File Upload**: Multer
+- **Validation**: class-validator, class-transformer
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+UNLICENSED
